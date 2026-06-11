@@ -24,18 +24,41 @@ Claude 같은 앱 개발 도구가 세명 인사이드의 회원가입 시스템
 - 로그인 쿠키: httpOnly accessToken / refreshToken
 - SMS API 키는 서버 환경변수에서만 사용
 
+## 관리자 시스템도 포함됨
+
+관리자 화면과 관리자 계정 생성 방식은 `ADMIN_GUIDE.md`에 따로 정리했습니다.
+
+- 관리자 페이지: `client/src/pages/AdminPage.tsx`
+- 관리자 API: `server/src/routes/admin.ts`
+- 관리자 계정 생성: `server/src/seed.ts`
+- 서버 로그/점검: `server/src/utils/serverLogs.ts`, `server/src/middleware/requestLogger.ts`
+- 개인정보 열람 로그: `AdminPrivacyAccessLog`
+
+Claude에 관리자 기능까지 요청하려면 아래처럼 말하면 됩니다.
+
+```text
+이 저장소의 회원가입 시스템과 관리자 시스템을 함께 참고해서 내 앱에 적용해줘.
+관리자 계정은 환경변수 ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_EMAIL, ADMIN_NICKNAME으로 seed에서 만들고,
+관리자 페이지에서는 회원 관리, 권한 변경, 게시글/신고/게시판/금지어 관리, 서버 점검, 서버 로그 조회가 가능하게 해줘.
+실제 관리자 비밀번호는 코드에 하드코딩하지 마.
+```
+
 ## 주요 파일
 
 - `client/src/pages/RegisterPage.tsx`: 회원가입 UI와 프론트 검증 흐름
 - `client/src/pages/LoginPage.tsx`: 로그인 UI
+- `client/src/pages/AdminPage.tsx`: 관리자 페이지 UI
 - `client/src/api/client.ts`: axios API 클라이언트
 - `client/src/store/auth.ts`: 로그인 사용자 상태
 - `server/src/routes/auth.ts`: 회원가입, 로그인, 휴대폰 인증 API
+- `server/src/routes/admin.ts`: 관리자 API
+- `server/src/seed.ts`: 관리자 계정 및 기본 게시판 생성
 - `server/src/utils/phone.ts`: 휴대폰 번호 정규화/검증
 - `server/src/utils/sms.ts`: SOLAPI 문자 발송
 - `server/src/utils/mailer.ts`: 이메일 발송
 - `server/src/middleware/auth.ts`: JWT/cookie 인증
 - `server/src/middleware/rateLimiters.ts`: 로그인/문자 인증 rate limit
+- `server/src/utils/serverLogs.ts`: 서버 로그 저장/마스킹
 - `server/src/config.ts`: 환경변수 구성
 - `server/src/prisma.ts`: Prisma client
 - `prisma/schema.prisma`: User, PhoneVerification DB 모델
