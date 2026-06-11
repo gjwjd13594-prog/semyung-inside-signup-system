@@ -1,0 +1,17 @@
+{
+  "name": "semyung-inside",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "build": "npm run build --prefix client && npm run prisma:generate --prefix server && npm run build --prefix server",
+    "dev:client": "npm run dev --prefix client -- --host 0.0.0.0 --port 3001",
+    "dev:server": "npm run dev --prefix server",
+    "check:integrations": "npm run check:integrations --prefix server",
+    "test:smoke": "npm run test:smoke --prefix server",
+    "backup": "powershell -ExecutionPolicy Bypass -File scripts/backup-postgres.ps1",
+    "restore": "powershell -ExecutionPolicy Bypass -File scripts/restore-postgres.ps1"
+  }
+}
