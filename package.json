@@ -13,5 +13,11 @@
     "test:smoke": "npm run test:smoke --prefix server",
     "backup": "powershell -ExecutionPolicy Bypass -File scripts/backup-postgres.ps1",
     "restore": "powershell -ExecutionPolicy Bypass -File scripts/restore-postgres.ps1"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3"
   }
 }
