@@ -213,6 +213,7 @@ authRouter.post(
     if (user.isBanned && (!user.banUntil || user.banUntil > new Date())) {
       return res.status(403).json({ message: user.banReason ?? "정지된 계정입니다." });
     }
+    await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
     const payload = { id: user.id, username: user.username, nickname: user.nickname, role: user.role };
     const accessToken = signAccessToken(payload);
     const refreshToken = signRefreshToken(payload);

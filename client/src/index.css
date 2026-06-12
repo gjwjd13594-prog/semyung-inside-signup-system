@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .panel-soft {
+    @apply shadow-sm border border-gray-100;
+  }
+}

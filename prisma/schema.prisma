@@ -25,12 +25,14 @@ model User {
   banUntil      DateTime?
   level         Int            @default(1)
   exp           Int            @default(0)
+  lastLoginAt   DateTime?
   posts         Post[]
   comments      Comment[]
   votes         Vote[]
   reports       Report[]
   notifications Notification[]
   bookmarks     Bookmark[]
+  auditLogs     AdminAuditLog[] @relation("AdminActor")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -248,4 +250,17 @@ model BannedWord {
   id    Int    @id @default(autoincrement())
   word  String @unique
   level Int    @default(1)
+}
+
+model AdminAuditLog {
+  id        Int      @id @default(autoincrement())
+  actor     User     @relation("AdminActor", fields: [actorId], references: [id])
+  actorId   Int
+  action    String   @db.VarChar(50)
+  targetId  String?
+  memo      String?
+  createdAt DateTime @default(now())
+
+  @@index([actorId])
+  @@index([createdAt])
 }

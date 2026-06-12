@@ -54,6 +54,17 @@ export function requireRole(roles: UserRole[]) {
   };
 }
 
+export async function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  try {
+    await attachAuthUser(req);
+    if (!req.user) return res.status(401).json({ message: "로그인이 필요합니다." });
+    if (req.user.role !== UserRole.ADMIN) return res.status(403).json({ message: "관리자 권한이 필요합니다." });
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
 function readToken(req: Request) {
   const auth = req.headers.authorization;
   if (auth?.startsWith("Bearer ")) return auth.slice(7);

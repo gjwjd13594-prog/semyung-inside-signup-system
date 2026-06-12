@@ -21,7 +21,7 @@ export function LoginPage() {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       setUser(data.user);
-      navigate("/");
+      navigate(data.user.role === "ADMIN" || data.user.role === "MANAGER" ? "/admin" : "/");
     } catch {
       setError("아이디 또는 비밀번호가 올바르지 않습니다.");
     } finally {
