@@ -7,10 +7,13 @@ import { config } from "./config.js";
 import { authRouter } from "./routes/auth.js";
 import { adminRouter } from "./routes/admin.js";
 import { photoRouter } from "./routes/photos.js";
+import { meetupRouter } from "./routes/meetups.js";
+import { chatRouter } from "./routes/chats.js";
 import { globalLimiter, apiLimiter, adminLimiter } from "./middleware/rateLimiters.js";
 import { firewall } from "./middleware/firewall.js";
 import { optionalAuth } from "./middleware/auth.js";
 import { requestLogger } from "./middleware/requestLogger.js";
+import { initSocket } from "./socket/index.js";
 
 const app = express();
 
@@ -32,8 +35,11 @@ app.use("/api", apiLimiter);
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminLimiter, adminRouter);
 app.use("/api/photos", photoRouter);
+app.use("/api/meetups", meetupRouter);
+app.use("/api/chats", chatRouter);
 
 const server = http.createServer(app);
+initSocket(server);
 
 server.listen(config.port, () => {
   console.log(`[server] listening on port ${config.port}`);

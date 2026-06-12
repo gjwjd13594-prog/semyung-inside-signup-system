@@ -30,6 +30,10 @@ model User {
   photoRejectReason   String?
   datingVisible       Boolean     @default(true)
   photos              ProfilePhoto[]
+  roomMemberships     RoomMember[]    @relation("RoomMembers")
+  sentMessages        ChatMessage[]   @relation("SentMessages")
+  hostedMeetups       Meetup[]        @relation("HostedMeetups")
+  joinRequests        JoinRequest[]   @relation("JoinRequests")
   posts               Post[]
   comments      Comment[]
   votes         Vote[]
@@ -277,6 +281,83 @@ model ProfilePhoto {
 
   @@index([userId])
   @@index([sha256])
+}
+
+enum RoomKind {
+  DM
+  MEETUP
+  GROUP
+}
+
+enum JoinStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ChatRoom {
+  id        String        @id @default(cuid())
+  kind      RoomKind
+  title     String
+  refId     String?
+  members   RoomMember[]
+  messages  ChatMessage[]
+  createdAt DateTime      @default(now())
+
+  @@index([kind, refId])
+}
+
+model RoomMember {
+  id         String   @id @default(cuid())
+  room       ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId     String
+  user       User     @relation("RoomMembers", fields: [userId], references: [id])
+  userId     Int
+  isHost     Boolean  @default(false)
+  lastReadAt DateTime @default(now())
+  joinedAt   DateTime @default(now())
+
+  @@unique([roomId, userId])
+  @@index([userId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  room      ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId    String
+  sender    User?    @relation("SentMessages", fields: [senderId], references: [id])
+  senderId  Int?
+  content   String
+  isSystem  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([roomId, createdAt])
+}
+
+model Meetup {
+  id        String        @id @default(cuid())
+  title     String
+  place     String
+  time      String
+  maxN      Int
+  tag       String
+  host      User          @relation("HostedMeetups", fields: [hostId], references: [id])
+  hostId    Int
+  ended     Boolean       @default(false)
+  requests  JoinRequest[]
+  createdAt DateTime      @default(now())
+}
+
+model JoinRequest {
+  id          String     @id @default(cuid())
+  meetup      Meetup     @relation(fields: [meetupId], references: [id], onDelete: Cascade)
+  meetupId    String
+  applicant   User       @relation("JoinRequests", fields: [applicantId], references: [id])
+  applicantId Int
+  status      JoinStatus @default(PENDING)
+  createdAt   DateTime   @default(now())
+
+  @@unique([meetupId, applicantId])
 }
 
 model AdminAuditLog {
