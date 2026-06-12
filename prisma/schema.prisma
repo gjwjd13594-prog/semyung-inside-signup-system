@@ -41,6 +41,8 @@ model User {
   notifications Notification[]
   bookmarks     Bookmark[]
   auditLogs     AdminAuditLog[] @relation("AdminActor")
+  resetTokens   PasswordResetToken[] @relation("ResetTokens")
+  deviceTokens  DeviceToken[]   @relation("DeviceTokens")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -358,6 +360,29 @@ model JoinRequest {
   createdAt   DateTime   @default(now())
 
   @@unique([meetupId, applicantId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  user      User     @relation("ResetTokens", fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model DeviceToken {
+  id        String   @id @default(cuid())
+  user      User     @relation("DeviceTokens", fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  token     String   @unique
+  platform  String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model AdminAuditLog {

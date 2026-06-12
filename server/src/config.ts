@@ -15,6 +15,8 @@ export const config = {
     .map((origin) => origin.trim())
     .filter(Boolean),
     process.env.RENDER_EXTERNAL_URL,
+    "capacitor://localhost",
+    "https://localhost",
   ].filter((origin): origin is string => Boolean(origin)),
   serverUrl: process.env.SERVER_URL || process.env.RENDER_EXTERNAL_URL || "http://localhost:4000",
   rateLimit: {

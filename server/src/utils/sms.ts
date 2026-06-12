@@ -12,6 +12,10 @@ export async function sendPhoneVerificationSms(phone: string, code: string) {
   return sendSolapiText(phone, `[세명 인사이드]\n휴대폰 인증번호는 ${code} 입니다.\n5분 안에 입력해 주세요.`);
 }
 
+export async function sendSms(phone: string, text: string) {
+  return sendSolapiText(phone, text);
+}
+
 async function sendSolapiText(to: string, text: string) {
   const apiKey = config.solapi.apiKey;
   const apiSecret = config.solapi.apiSecret;

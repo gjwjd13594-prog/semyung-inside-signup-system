@@ -9,6 +9,8 @@ import { adminRouter } from "./routes/admin.js";
 import { photoRouter } from "./routes/photos.js";
 import { meetupRouter } from "./routes/meetups.js";
 import { chatRouter } from "./routes/chats.js";
+import { recoveryRouter } from "./routes/recovery.js";
+import { devicesRouter } from "./routes/devices.js";
 import { globalLimiter, apiLimiter, adminLimiter } from "./middleware/rateLimiters.js";
 import { firewall } from "./middleware/firewall.js";
 import { optionalAuth } from "./middleware/auth.js";
@@ -37,6 +39,8 @@ app.use("/api/admin", adminLimiter, adminRouter);
 app.use("/api/photos", photoRouter);
 app.use("/api/meetups", meetupRouter);
 app.use("/api/chats", chatRouter);
+app.use("/api/recovery", recoveryRouter);
+app.use("/api/devices", devicesRouter);
 
 const server = http.createServer(app);
 initSocket(server);

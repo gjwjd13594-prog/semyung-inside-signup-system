@@ -4,6 +4,7 @@ import { useAuthStore } from "./store/auth";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { RequireAdmin } from "./components/RequireAdmin";
+import { RecoveryPage } from "./pages/RecoveryPage";
 import { AdminLayout } from "./pages/admin/AdminLayout";
 import { AdminOverview } from "./pages/admin/AdminOverview";
 import { AdminUsers } from "./pages/admin/AdminUsers";
@@ -30,6 +31,7 @@ export function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/recovery" element={<RecoveryPage />} />
 
         <Route
           path="/admin"

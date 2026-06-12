@@ -38,7 +38,7 @@ const phoneVerifySchema = z.object({
 const secureCookie = process.env.NODE_ENV === "production";
 const baseCookieOptions = {
   httpOnly: true,
-  sameSite: "lax" as const,
+  sameSite: (secureCookie ? "none" : "lax") as "none" | "lax",
   secure: secureCookie,
   path: "/",
 };

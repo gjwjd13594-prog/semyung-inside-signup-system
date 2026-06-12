@@ -61,7 +61,7 @@ export function LoginPage() {
           {loading ? "로그인 중..." : "로그인"}
         </button>
         <p className="text-center text-sm">
-          <Link className="font-black text-brand" to="/register">회원가입</Link> · <Link className="font-black text-brand" to="/forgot-password">비밀번호 찾기</Link>
+          <Link className="font-black text-brand" to="/register">회원가입</Link> · <Link className="font-black text-brand" to="/recovery">계정 찾기 / 비밀번호 재설정</Link>
         </p>
       </div>
     </form>
