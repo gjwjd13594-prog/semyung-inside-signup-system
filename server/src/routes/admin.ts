@@ -9,6 +9,8 @@ import { requireAuth, requireRole } from "../middleware/auth.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { createTransporter } from "../utils/mailer.js";
 import { appendServerLog, getServerLogs } from "../utils/serverLogs.js";
+import { maskPhone } from "../utils/mask.js";
+import { detectImpersonation } from "../services/dedup.js";
 
 export const adminRouter = Router();
 
@@ -399,6 +401,56 @@ adminRouter.delete(
   asyncHandler(async (req, res) => {
     const word = await prisma.bannedWord.delete({ where: { id: Number(req.params.id) } });
     res.json({ word });
+  }),
+);
+
+// ─────────────────── 프로필 사진 심사 ───────────────────
+
+adminRouter.get(
+  "/profiles/pending",
+  asyncHandler(async (_req, res) => {
+    const users = await prisma.user.findMany({
+      where: { photoStatus: "PENDING" },
+      select: {
+        id: true, nickname: true, phone: true,
+        photos: { orderBy: { order: "asc" }, select: { id: true, url: true, isPrimary: true } },
+      },
+      orderBy: { createdAt: "asc" },
+    });
+    const withFlags = await Promise.all(
+      users.map(async (u) => ({
+        ...u,
+        phone: maskPhone(u.phone),
+        impersonationSuspects: await detectImpersonation(u.id),
+      })),
+    );
+    res.json({ items: withFlags });
+  }),
+);
+
+adminRouter.patch(
+  "/profiles/:userId/approve",
+  asyncHandler(async (req, res) => {
+    await prisma.user.update({
+      where: { id: Number(req.params.userId) },
+      data: { photoStatus: "APPROVED", photoRejectReason: null },
+    });
+    await prisma.adminAuditLog.create({ data: { actorId: req.user!.id, action: "PROFILE_APPROVE", targetId: req.params.userId } });
+    res.json({ ok: true });
+  }),
+);
+
+adminRouter.patch(
+  "/profiles/:userId/reject",
+  asyncHandler(async (req, res) => {
+    const { reason } = req.body ?? {};
+    if (!reason) return res.status(400).json({ message: "부적합 사유를 입력해주세요." });
+    await prisma.user.update({
+      where: { id: Number(req.params.userId) },
+      data: { photoStatus: "REJECTED", photoRejectReason: reason },
+    });
+    await prisma.adminAuditLog.create({ data: { actorId: req.user!.id, action: "PROFILE_REJECT", targetId: req.params.userId, memo: reason } });
+    res.json({ ok: true });
   }),
 );
 

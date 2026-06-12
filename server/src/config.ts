@@ -37,4 +37,6 @@ export const config = {
     apiSecret: process.env.SOLAPI_API_SECRET ?? "",
     senderPhone: process.env.SOLAPI_SENDER_PHONE ?? "",
   },
+  nodeEnv: process.env.NODE_ENV ?? "development",
+  clientOrigin: process.env.CLIENT_URL ?? "http://localhost:3001",
 };

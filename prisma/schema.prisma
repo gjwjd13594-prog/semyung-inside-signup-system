@@ -25,8 +25,12 @@ model User {
   banUntil      DateTime?
   level         Int            @default(1)
   exp           Int            @default(0)
-  lastLoginAt   DateTime?
-  posts         Post[]
+  lastLoginAt         DateTime?
+  photoStatus         PhotoStatus @default(NONE)
+  photoRejectReason   String?
+  datingVisible       Boolean     @default(true)
+  photos              ProfilePhoto[]
+  posts               Post[]
   comments      Comment[]
   votes         Vote[]
   reports       Report[]
@@ -250,6 +254,29 @@ model BannedWord {
   id    Int    @id @default(autoincrement())
   word  String @unique
   level Int    @default(1)
+}
+
+enum PhotoStatus {
+  NONE
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ProfilePhoto {
+  id        String      @id @default(cuid())
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  key       String
+  url       String
+  sha256    String
+  phash     String
+  isPrimary Boolean     @default(false)
+  order     Int         @default(0)
+  createdAt DateTime    @default(now())
+
+  @@index([userId])
+  @@index([sha256])
 }
 
 model AdminAuditLog {

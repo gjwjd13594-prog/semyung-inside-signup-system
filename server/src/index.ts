@@ -6,6 +6,7 @@ import http from "http";
 import { config } from "./config.js";
 import { authRouter } from "./routes/auth.js";
 import { adminRouter } from "./routes/admin.js";
+import { photoRouter } from "./routes/photos.js";
 import { globalLimiter, apiLimiter, adminLimiter } from "./middleware/rateLimiters.js";
 import { firewall } from "./middleware/firewall.js";
 import { optionalAuth } from "./middleware/auth.js";
@@ -30,6 +31,7 @@ app.get("/health", (_req, res) => res.json({ ok: true, ts: new Date().toISOStrin
 app.use("/api", apiLimiter);
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminLimiter, adminRouter);
+app.use("/api/photos", photoRouter);
 
 const server = http.createServer(app);
 
